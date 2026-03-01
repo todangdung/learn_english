@@ -254,7 +254,8 @@ function App() {
     })
 
     if (autoNextTimerRef.current) clearTimeout(autoNextTimerRef.current)
-    autoNextTimerRef.current = setTimeout(pickNextWord, autoNextMs)
+    const delay = correct ? autoNextMs : autoNextMs * 3
+    autoNextTimerRef.current = setTimeout(pickNextWord, delay)
   }
 
   const handleNext = () => {
