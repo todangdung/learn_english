@@ -279,11 +279,18 @@ body {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.option:hover:not(:disabled) {
-  background: var(--surface-hover);
-  border-color: var(--primary);
+@media (hover: hover) and (pointer: fine) {
+  .option:hover:not(:disabled) {
+    background: var(--surface-hover);
+    border-color: var(--primary);
+  }
+}
+
+.option:focus {
+  outline: none;
 }
 
 .option:active:not(:disabled) {

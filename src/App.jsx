@@ -218,13 +218,17 @@ function App() {
     setShowResult(false)
   }, [vocabulary, optionsCount, getWeightedRandomWord, generateOptions])
 
-  const handleAnswerSelect = (answer) => {
+  const handleAnswerSelect = (answer, event) => {
     if (showResult) return
 
     const correct = answer === currentWord.vi
     setSelectedAnswer(answer)
     setIsCorrect(correct)
     setShowResult(true)
+
+    if (event?.currentTarget && typeof event.currentTarget.blur === 'function') {
+      event.currentTarget.blur()
+    }
 
     setProgress((prev) => {
       const curr = prev[currentWord.en] ?? {
@@ -428,7 +432,7 @@ function App() {
                   <button
                     key={i}
                     className={optionClass(opt)}
-                    onClick={() => handleAnswerSelect(opt)}
+                    onClick={(e) => handleAnswerSelect(opt, e)}
                     disabled={showResult}
                   >
                     {opt}
