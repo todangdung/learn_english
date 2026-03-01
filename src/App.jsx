@@ -54,6 +54,8 @@ function saveToStorage(vocabulary, progress) {
 function App() {
   const [vocabulary, setVocabulary] = useState([])
   const [progress, setProgress] = useState({})
+  const [vocabPresets, setVocabPresets] = useState([])
+  const [presetLoading, setPresetLoading] = useState(null)
   const [optionsCount, setOptionsCount] = useState(loadOptionsCount())
   const [currentWord, setCurrentWord] = useState(null)
   const [options, setOptions] = useState([])
@@ -74,6 +76,49 @@ function App() {
   const isFullProgressFile = (data) =>
     Array.isArray(data?.vocabulary) && typeof data?.progress === 'object'
 
+  const loadVocabData = useCallback((data) => {
+    if (isFullProgressFile(data)) {
+      setVocabulary(data.vocabulary)
+      setProgress(data.progress ?? {})
+    } else {
+      const normalized = normalizeVocab(data)
+      if (normalized.length < 2) {
+        alert('Cần ít nhất 2 từ vựng!')
+        return false
+      }
+      const stored = loadFromStorage()
+      let mergedProgress = {}
+      if (stored?.progress && stored.vocabulary?.length > 0) {
+        const storedMap = new Map(stored.vocabulary.map((v) => [v.en, v.vi]))
+        for (const { en } of normalized) {
+          if (storedMap.has(en) && stored.progress[en]) {
+            mergedProgress[en] = stored.progress[en]
+          }
+        }
+      }
+      setVocabulary(normalized)
+      setProgress(mergedProgress)
+    }
+    setCurrentWord(null)
+    setSelectedAnswer(null)
+    setShowResult(false)
+    return true
+  }, [])
+
+  const handlePresetSelect = async (preset) => {
+    setPresetLoading(preset.id)
+    try {
+      const res = await fetch(`/vocab/${preset.file}`)
+      if (!res.ok) throw new Error('Không tải được')
+      const data = await res.json()
+      loadVocabData(data)
+    } catch (err) {
+      alert('Không tải được bộ từ. Thử lại sau.')
+    } finally {
+      setPresetLoading(null)
+    }
+  }
+
   const handleFileImport = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -82,32 +127,7 @@ function App() {
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target.result)
-
-        if (isFullProgressFile(data)) {
-          setVocabulary(data.vocabulary)
-          setProgress(data.progress ?? {})
-        } else {
-          const normalized = normalizeVocab(data)
-          if (normalized.length < 2) {
-            alert('Cần ít nhất 2 từ vựng trong file JSON!')
-            return
-          }
-          const stored = loadFromStorage()
-          let mergedProgress = {}
-          if (stored?.progress && stored.vocabulary?.length > 0) {
-            const storedMap = new Map(stored.vocabulary.map((v) => [v.en, v.vi]))
-            for (const { en } of normalized) {
-              if (storedMap.has(en) && stored.progress[en]) {
-                mergedProgress[en] = stored.progress[en]
-              }
-            }
-          }
-          setVocabulary(normalized)
-          setProgress(mergedProgress)
-        }
-        setCurrentWord(null)
-        setSelectedAnswer(null)
-        setShowResult(false)
+        loadVocabData(data)
       } catch (err) {
         alert('File JSON không hợp lệ!')
       }
@@ -258,6 +278,14 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (vocabulary.length > 0) return
+    fetch('/vocab/list.json')
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => setVocabPresets(data?.sets ?? []))
+      .catch(() => setVocabPresets([]))
+  }, [vocabulary.length])
+
+  useEffect(() => {
     if (vocabulary.length >= optionsCount && !currentWord) pickNextWord()
   }, [vocabulary, optionsCount, currentWord, pickNextWord])
 
@@ -305,6 +333,27 @@ function App() {
 
       {vocabulary.length === 0 ? (
         <div className="import-section">
+          <h2 className="import-title">Chọn bộ từ có sẵn</h2>
+          <div className="preset-grid">
+            {vocabPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="preset-card"
+                onClick={() => handlePresetSelect(preset)}
+                disabled={!!presetLoading}
+              >
+                <span className="preset-name">{preset.name}</span>
+                <span className="preset-desc">{preset.description}</span>
+                {presetLoading === preset.id && <span className="preset-loading">Đang tải...</span>}
+              </button>
+            ))}
+          </div>
+
+          <div className="import-divider">
+            <span>hoặc</span>
+          </div>
+
           <label className="import-btn">
             <input
               ref={fileInputRef}
@@ -316,15 +365,12 @@ function App() {
             Import file JSON
           </label>
           <p className="hint">
-            Định dạng từ vựng: <code>{"{ \"từ tiếng anh\": \"nghĩa tiếng việt\" }"}</code>
+            Định dạng: <code>{"{ \"từ tiếng anh\": \"nghĩa tiếng việt\" }"}</code>
           </p>
           <p className="hint">
-            Hoặc file tiến độ đầy đủ (có <code>vocabulary</code> và <code>progress</code>)
-          </p>
-          <p className="hint">
-            Mẫu: <a href="/sample-vocabulary.json" download>sample-vocabulary.json</a>
-            {' | '}
-            <a href="/sample-progress.json" download>sample-progress.json</a> (có tiến độ)
+            <a href="/sample-vocabulary.json" download>sample-vocabulary.json</a>
+            {' · '}
+            <a href="/sample-progress.json" download>sample-progress.json</a>
           </p>
         </div>
       ) : (
@@ -388,6 +434,17 @@ function App() {
           )}
 
           <div className="toolbar">
+            <button
+              type="button"
+              className="toolbar-btn secondary"
+              onClick={() => {
+                setVocabulary([])
+                setCurrentWord(null)
+              }}
+              title="Quay lại chọn bộ từ"
+            >
+              Đổi bộ từ
+            </button>
             <div className="options-count-selector">
               <span className="options-count-label">Số đáp án:</span>
               {OPTIONS_COUNTS.map((n) => (

@@ -1,0 +1,22 @@
+{
+  "sets": [
+    {
+      "id": "basic",
+      "name": "Từ vựng cơ bản",
+      "description": "~15 từ quen thuộc cho người mới bắt đầu",
+      "file": "basic.json"
+    },
+    {
+      "id": "toeic",
+      "name": "TOEIC thường gặp",
+      "description": "~30 từ hay xuất hiện trong đề TOEIC",
+      "file": "toeic.json"
+    },
+    {
+      "id": "ielts",
+      "name": "IELTS cơ bản",
+      "description": "~25 từ học thuật phổ biến",
+      "file": "ielts.json"
+    }
+  ]
+}

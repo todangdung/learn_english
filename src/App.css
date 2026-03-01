@@ -51,6 +51,87 @@ body {
   gap: 1rem;
 }
 
+.import-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 2px solid var(--surface-hover);
+  border-radius: 12px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-card:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.preset-card:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.preset-card:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.preset-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.preset-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.preset-loading {
+  font-size: 0.8rem;
+  color: var(--primary);
+}
+
+.import-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 320px;
+  margin: 0.5rem 0;
+}
+
+.import-divider::before,
+.import-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--surface-hover);
+}
+
+.import-divider span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 .import-btn {
   display: inline-block;
   padding: 0.875rem 1.75rem;
