@@ -103,10 +103,33 @@ body {
   text-align: center;
 }
 
+.word-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .word {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.speak-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  background: var(--surface-hover);
+  color: var(--text);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speak-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
 }
 
 .options-grid {

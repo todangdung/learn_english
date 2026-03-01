@@ -5,6 +5,23 @@ const STORAGE_KEY = 'english-vocab-progress'
 const OPTIONS_COUNT_KEY = 'english-options-count'
 const OPTIONS_COUNTS = [2, 4, 10]
 
+function speakWord(word, times = 2, delayMs = 1000) {
+  if (!word || typeof speechSynthesis === 'undefined') return
+  speechSynthesis.cancel()
+  const speak = (remaining) => {
+    if (remaining <= 0) return
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.lang = 'en-US'
+    utterance.onend = () => {
+      if (remaining > 1) {
+        setTimeout(() => speak(remaining - 1), delayMs)
+      }
+    }
+    speechSynthesis.speak(utterance)
+  }
+  speak(times)
+}
+
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -263,8 +280,15 @@ function App() {
   useEffect(() => {
     return () => {
       if (autoNextTimerRef.current) clearTimeout(autoNextTimerRef.current)
+      speechSynthesis?.cancel()
     }
   }, [])
+
+  useEffect(() => {
+    if (!currentWord) return
+    speechSynthesis?.cancel()
+    speakWord(currentWord.en, 2, 1000)
+  }, [currentWord?.en])
 
   const optionClass = (opt) => {
     if (!showResult) return 'option'
@@ -308,7 +332,18 @@ function App() {
           {currentWord && (
             <>
               <div className="word-display">
-                <span className="word">{currentWord.en}</span>
+                <div className="word-row">
+                  <span className="word">{currentWord.en}</span>
+                  <button
+                    type="button"
+                    className="speak-btn"
+                    onClick={() => speakWord(currentWord.en, 2, 1000)}
+                    title="Đọc lại phát âm"
+                    aria-label="Đọc lại"
+                  >
+                    🔊 Đọc lại
+                  </button>
+                </div>
                 {getWordProgress(currentWord.en).priority > 0 && (
                   <span className="priority-badge">
                     Ưu tiên: {getWordProgress(currentWord.en).priority}
