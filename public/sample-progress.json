@@ -1,0 +1,18 @@
+{
+  "vocabulary": [
+    { "en": "apple", "vi": "táo" },
+    { "en": "banana", "vi": "chuối" },
+    { "en": "cat", "vi": "mèo" },
+    { "en": "dog", "vi": "chó" },
+    { "en": "elephant", "vi": "voi" },
+    { "en": "flower", "vi": "hoa" },
+    { "en": "house", "vi": "nhà" },
+    { "en": "book", "vi": "sách" }
+  ],
+  "progress": {
+    "apple": { "wrongCount": 0, "priority": 0, "shownCount": 1 },
+    "banana": { "wrongCount": 0, "priority": 0, "shownCount": 1 },
+    "cat": { "wrongCount": 2, "priority": 2, "shownCount": 3 },
+    "dog": { "wrongCount": 4, "priority": 3, "shownCount": 5 }
+  }
+}
