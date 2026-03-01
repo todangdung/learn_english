@@ -3,7 +3,9 @@ import './App.css'
 
 const STORAGE_KEY = 'english-vocab-progress'
 const OPTIONS_COUNT_KEY = 'english-options-count'
-const OPTIONS_COUNTS = [2, 4, 10]
+const OPTIONS_COUNTS = Array.from({ length: 9 }, (_, i) => i + 2)
+const AUTO_NEXT_KEY = 'english-auto-next-ms'
+const AUTO_NEXT_VALUES = Array.from({ length: 20 }, (_, i) => (i + 1) * 200)
 
 function speakWord(word, times = 2, delayMs = 1000) {
   if (!word || typeof speechSynthesis === 'undefined') return
@@ -40,6 +42,15 @@ function loadOptionsCount() {
   return OPTIONS_COUNTS.includes(n) ? n : 4
 }
 
+function loadAutoNextMs() {
+  const v = localStorage.getItem(AUTO_NEXT_KEY)
+  const n = parseInt(v, 10)
+  if (!Number.isFinite(n)) return 2000
+  if (n < 200) return 200
+  if (n > 4000) return 4000
+  return n
+}
+
 function saveToStorage(vocabulary, progress) {
   try {
     localStorage.setItem(
@@ -57,6 +68,7 @@ function App() {
   const [vocabPresets, setVocabPresets] = useState([])
   const [presetLoading, setPresetLoading] = useState(null)
   const [optionsCount, setOptionsCount] = useState(loadOptionsCount())
+  const [autoNextMs, setAutoNextMs] = useState(loadAutoNextMs)
   const [currentWord, setCurrentWord] = useState(null)
   const [options, setOptions] = useState([])
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -64,6 +76,14 @@ function App() {
   const [isCorrect, setIsCorrect] = useState(false)
   const autoNextTimerRef = useRef(null)
   const fileInputRef = useRef(null)
+
+  const clearActiveElement = () => {
+    if (typeof document === 'undefined') return
+    const active = document.activeElement
+    if (active && active instanceof HTMLElement) {
+      active.blur()
+    }
+  }
 
   const getWordProgress = (en) =>
     progress[en] ?? { wrongCount: 0, priority: 0, shownCount: 0 }
@@ -179,6 +199,8 @@ function App() {
   const pickNextWord = useCallback(() => {
     if (vocabulary.length < optionsCount) return
 
+    clearActiveElement()
+
     const word = getWeightedRandomWord()
     if (!word) return
 
@@ -228,7 +250,7 @@ function App() {
     })
 
     if (autoNextTimerRef.current) clearTimeout(autoNextTimerRef.current)
-    autoNextTimerRef.current = setTimeout(pickNextWord, 2000)
+    autoNextTimerRef.current = setTimeout(pickNextWord, autoNextMs)
   }
 
   const handleNext = () => {
@@ -304,6 +326,10 @@ function App() {
       alert(`Cần ít nhất ${n} từ vựng để chọn ${n} đáp án. Hiện có ${vocabulary.length} từ.`)
     }
   }
+
+  useEffect(() => {
+    localStorage.setItem(AUTO_NEXT_KEY, String(autoNextMs))
+  }, [autoNextMs])
 
   useEffect(() => {
     return () => {
@@ -427,7 +453,9 @@ function App() {
                   Từ tiếp theo →
                 </button>
                 {showResult && (
-                  <span className="auto-next-hint">Tự động chuyển sau 2 giây</span>
+                  <span className="auto-next-hint">
+                    {`Tự động chuyển sau ${(autoNextMs / 1000).toFixed(1)} giây`}
+                  </span>
                 )}
               </div>
             </>
@@ -458,6 +486,20 @@ function App() {
                   {n}
                 </button>
               ))}
+            </div>
+            <div className="auto-next-selector">
+              <span className="options-count-label">Tự next:</span>
+              <select
+                className="auto-next-select"
+                value={autoNextMs}
+                onChange={(e) => setAutoNextMs(Number(e.target.value))}
+              >
+                {AUTO_NEXT_VALUES.map((ms) => (
+                  <option key={ms} value={ms}>
+                    {(ms / 1000).toFixed(1)}s
+                  </option>
+                ))}
+              </select>
             </div>
             <label className="toolbar-btn secondary">
               <input
