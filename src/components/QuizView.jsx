@@ -112,7 +112,7 @@ export function QuizView({
       <div className="mt-2 flex flex-wrap items-center justify-center gap-2 border-t border-slate-800 pt-4">
         <button
           type="button"
-          className="toolbar-btn-secondary"
+          className="rounded-md border border-blue-400/60 bg-transparent px-3 py-1 text-xs font-medium text-blue-300 transition hover:bg-blue-500/10"
           onClick={onResetSet}
           title="Quay lại chọn bộ từ"
         >
@@ -121,23 +121,20 @@ export function QuizView({
 
         <div className="flex flex-wrap items-center gap-1">
           <span className="text-xs text-slate-400">Số đáp án:</span>
-          {optionsCounts.map((n) => (
-            <button
-              key={n}
-              type="button"
-              className={
-                'rounded-md px-2 py-1 text-xs font-medium ' +
-                (optionsCount === n
-                  ? 'bg-sky-400 text-slate-950'
-                  : 'bg-slate-800 text-slate-100')
-              }
-              onClick={() => onOptionsCountChange(n)}
-              disabled={vocabularyLength < n}
-              title={vocabularyLength < n ? `Cần ≥ ${n} từ` : `${n} đáp án`}
-            >
-              {n}
-            </button>
-          ))}
+           <select
+            className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
+            value={optionsCount}
+            onChange={(e) => onOptionsCountChange(Number(e.target.value))}
+          >
+            {optionsCounts.map((_, i) => {
+              return (
+                <option key={_} value={_}>
+                  {_}
+                </option>
+              )
+            })}
+          </select>
+          
         </div>
 
         <div className="flex items-center gap-1">

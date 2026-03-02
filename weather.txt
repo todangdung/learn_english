@@ -1,0 +1,50 @@
+Weather (n)	/ˈweð.ər/	Thời tiết
+Climate (n)	/ˈklaɪ.mət/	Khí hậu
+Temperature (n)	/ˈtem.prə.tʃər/	Nhiệt độ
+Forecast (n)	/ˈfɔː.kɑːst/	Dự báo thời tiết
+Season (n)	/ˈsiː.zən/	Mùa
+Spring (n)	/sprɪŋ/	Mùa xuân
+Summer (n)	/ˈsʌm.ər/	Mùa hè
+Autumn (n)	/ˈɔː.təm/	Mùa thu
+Winter (n)	/ˈwɪn.tər/	Mùa đông
+Sun (n)	/sʌn/	Mặt trời
+Sunshine (n)	/ˈsʌn.ʃaɪn/	Ánh nắng
+Sunny (adj)	/ˈsʌn.i/	Nắng, trời nắng
+Cloud (n)	/klaʊd/	Đám mây
+Cloudy (adj)	/ˈklaʊ.di/	Nhiều mây
+Rain (n)	/reɪn/	Mưa
+Rainy (adj)	/ˈreɪ.ni/	Có mưa
+Shower (n)	/ˈʃaʊ.ər/	Mưa rào
+Drizzle (n)	/ˈdrɪz.l̩/	Mưa phùn
+Downpour (n)	/ˈdaʊn.pɔːr/	
+Mưa lớn, mưa như trút
+Thunderstorm (n)	/ˈθʌn.də.stɔːm/	Dông bão
+Lightning (n)	/ˈlaɪt.nɪŋ/	Tia chớp
+Thunder (n)	/ˈθʌn.dər/	Sấm
+Snow (n)	/snəʊ/	Tuyết
+Snowy (adj)	/ˈsnəʊ.i/	Có tuyết
+Blizzard (n)	/ˈblɪz.əd/	Bão tuyết
+Hail (n)	/heɪl/	Mưa đá
+Fog (n)	/fɒɡ/	Sương mù
+Foggy (adj)	/ˈfɒɡ.i/	
+Nhiều sương mù
+Mist (n)	/mɪst/	Sương mù nhẹ
+Wind (n)	/wɪnd/	Gió
+Windy (adj)	/ˈwɪn.di/	Có gió
+Storm (n)	/stɔːm/	Bão
+Stormy (adj)	/ˈstɔː.mi/	Có bão
+Hurricane (n)	/ˈhʌr.ɪ.kən/	
+Bão lớn (ở Đại Tây Dương)
+Typhoon (n)	/taɪˈfuːn/	
+Bão nhiệt đới (ở Thái Bình Dương)
+Tornado (n)	/tɔːrˈneɪ.dəʊ/	Lốc xoáy
+Drought (n)	/draʊt/	Hạn hán
+Humidity (n)	/hjuːˈmɪd.ə.ti/	Độ ẩm
+Humid (adj)	/ˈhjuː.mɪd/	Ẩm ướt
+Heatwave (n)	/ˈhiːt.weɪv/	Đợt nắng nóng
+Freezing (adj)	/ˈfriː.zɪŋ/	Rét buốt
+Chilly (adj)	/ˈtʃɪl.i/	Lạnh
+Warm (adj)	/wɔːm/	Ấm áp
+Cold (adj)	/kəʊld/	Lạnh
+Breezy (adj)	/ˈbriː.zi/	Có gió nhẹ
+Overcast (adj)	/ˈəʊ.və.kɑːst/	U ám, âm u
