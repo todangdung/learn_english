@@ -8,13 +8,14 @@ const OPTIONS_COUNTS = Array.from({ length: 9 }, (_, i) => i + 2)
 const AUTO_NEXT_KEY = 'english-auto-next-ms'
 const AUTO_NEXT_VALUES = Array.from({ length: 20 }, (_, i) => (i + 1) * 200)
 
-function speakWord(word, times = 2, delayMs = 1000) {
-  if (!word || typeof speechSynthesis === 'undefined') return
-  speechSynthesis.cancel()
+function speakWord(text, lang = 'en-US', times = 1, delayMs = 500) {
+  if (!text || typeof speechSynthesis === 'undefined') return
+  
   const speak = (remaining) => {
     if (remaining <= 0) return
-    const utterance = new SpeechSynthesisUtterance(word)
-    utterance.lang = 'en-US'
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = lang
+    utterance.rate = 0.9 // Đọc chậm một chút để dễ nghe
     utterance.onend = () => {
       if (remaining > 1) {
         setTimeout(() => speak(remaining - 1), delayMs)
@@ -23,6 +24,27 @@ function speakWord(word, times = 2, delayMs = 1000) {
     speechSynthesis.speak(utterance)
   }
   speak(times)
+}
+
+function speakCorrection(en, vi) {
+  if (typeof speechSynthesis === 'undefined') return
+  speechSynthesis.cancel()
+
+  const enUtterance = new SpeechSynthesisUtterance(en)
+  enUtterance.lang = 'en-US'
+  enUtterance.rate = 0.8
+
+  const viUtterance = new SpeechSynthesisUtterance(vi)
+  viUtterance.lang = 'vi-VN'
+  viUtterance.rate = 0.9
+
+  enUtterance.onend = () => {
+    setTimeout(() => {
+      speechSynthesis.speak(viUtterance)
+    }, 500)
+  }
+
+  speechSynthesis.speak(enUtterance)
 }
 
 function loadFromStorage() {
@@ -254,6 +276,10 @@ function App() {
       return { ...prev, [currentWord.en]: next }
     })
 
+    if (!correct) {
+      speakCorrection(currentWord.en, currentWord.vi)
+    }
+
     if (autoNextTimerRef.current) clearTimeout(autoNextTimerRef.current)
     const delay = correct ? autoNextMs : autoNextMs * 3
     autoNextTimerRef.current = setTimeout(pickNextWord, delay)
@@ -347,7 +373,7 @@ function App() {
   useEffect(() => {
     if (!currentWord) return
     speechSynthesis?.cancel()
-    speakWord(currentWord.en, 2, 1000)
+    speakWord(currentWord.en, 'en-US', 2, 1000)
   }, [currentWord?.en])
 
   const optionClass = (opt) => {
@@ -359,9 +385,9 @@ function App() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-xl flex-col px-4 py-8">
-      <header className="mb-8 text-center">
+{/*       <header className="mb-8 text-center">
         <h1 className="text-2xl font-bold tracking-tight">📚 Học từ vựng tiếng Anh</h1>
-      </header>
+      </header> */}
 
       {vocabulary.length === 0 ? (
         <ImportView

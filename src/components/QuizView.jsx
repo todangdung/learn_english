@@ -47,7 +47,7 @@ export function QuizView({
           <button
             type="button"
             className="inline-flex items-center gap-1 rounded-xl border border-sky-400 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-50 transition hover:bg-slate-700"
-            onClick={() => speakWord(currentWord.en, 2, 1000)}
+            onClick={() => speakWord(currentWord.en, 'en-US', 2, 1000)}
           >
             🔊 Đọc lại
           </button>
