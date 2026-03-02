@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import './App.css'
+import { ImportView } from './components/ImportView.jsx'
+import { QuizView } from './components/QuizView.jsx'
 
 const STORAGE_KEY = 'english-vocab-progress'
 const OPTIONS_COUNT_KEY = 'english-options-count'
@@ -350,183 +351,54 @@ function App() {
   }, [currentWord?.en])
 
   const optionClass = (opt) => {
-    if (!showResult) return 'option'
-    if (opt === currentWord.vi) return 'option option-correct'
-    if (opt === selectedAnswer && !isCorrect) return 'option option-wrong'
-    return 'option option-disabled'
+    if (!showResult) return ''
+    if (opt === currentWord.vi) return 'correct'
+    if (opt === selectedAnswer && !isCorrect) return 'wrong'
+    return 'disabled'
   }
 
   return (
-    <div className="app">
-      <header className="header">
-        <h1>📚 Học từ vựng tiếng Anh</h1>
+    <div className="mx-auto flex min-h-screen max-w-xl flex-col px-4 py-8">
+      <header className="mb-8 text-center">
+        <h1 className="text-2xl font-bold tracking-tight">📚 Học từ vựng tiếng Anh</h1>
       </header>
 
       {vocabulary.length === 0 ? (
-        <div className="import-section">
-          <h2 className="import-title">Chọn bộ từ có sẵn</h2>
-          <div className="preset-grid">
-            {vocabPresets.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                className="preset-card"
-                onClick={() => handlePresetSelect(preset)}
-                disabled={!!presetLoading}
-              >
-                <span className="preset-name">{preset.name}</span>
-                <span className="preset-desc">{preset.description}</span>
-                {presetLoading === preset.id && <span className="preset-loading">Đang tải...</span>}
-              </button>
-            ))}
-          </div>
-
-          <div className="import-divider">
-            <span>hoặc</span>
-          </div>
-
-          <label className="import-btn">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileImport}
-              style={{ display: 'none' }}
-            />
-            Import file JSON
-          </label>
-          <p className="hint">
-            Định dạng: <code>{"{ \"từ tiếng anh\": \"nghĩa tiếng việt\" }"}</code>
-          </p>
-          <p className="hint">
-            <a href="/sample-vocabulary.json" download>sample-vocabulary.json</a>
-            {' · '}
-            <a href="/sample-progress.json" download>sample-progress.json</a>
-          </p>
-        </div>
+        <ImportView
+          fileInputRef={fileInputRef}
+          onFileChange={handleFileImport}
+          presets={vocabPresets.map((preset) => ({
+            ...preset,
+            onSelect: handlePresetSelect,
+          }))}
+          presetLoading={presetLoading}
+        />
       ) : (
-        <div className="quiz-section">
-          {currentWord && (
-            <>
-              <div className="word-display">
-                <div className="word-row">
-                  <span className="word">{currentWord.en}</span>
-                  <button
-                    type="button"
-                    className="speak-btn"
-                    onClick={() => speakWord(currentWord.en, 2, 1000)}
-                    title="Đọc lại phát âm"
-                    aria-label="Đọc lại"
-                  >
-                    🔊 Đọc lại
-                  </button>
-                </div>
-                {getWordProgress(currentWord.en).priority > 0 && (
-                  <span className="priority-badge">
-                    Ưu tiên: {getWordProgress(currentWord.en).priority}
-                  </span>
-                )}
-              </div>
-
-              <div className={`options-grid options-grid-${optionsCount}`}>
-                {options.map((opt, i) => (
-                  <button
-                    key={i}
-                    className={optionClass(opt)}
-                    onClick={(e) => handleAnswerSelect(opt, e)}
-                    disabled={showResult}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-
-              {showResult && (
-                <div className={`result ${isCorrect ? 'result-correct' : 'result-wrong'}`}>
-                  {isCorrect ? (
-                    <>✅ Đúng! Từ &quot;{currentWord.en}&quot; = {currentWord.vi}</>
-                  ) : (
-                    <>
-                      ❌ Sai! Đáp án đúng: <strong>{currentWord.en}</strong> = {currentWord.vi}
-                    </>
-                  )}
-                </div>
-              )}
-
-              <div className="next-section">
-                <button className="next-btn" onClick={handleNext}>
-                  Từ tiếp theo →
-                </button>
-                {showResult && (
-                  <span className="auto-next-hint">
-                    {`Tự động chuyển sau ${(autoNextMs / 1000).toFixed(1)} giây`}
-                  </span>
-                )}
-              </div>
-            </>
-          )}
-
-          <div className="toolbar">
-            <button
-              type="button"
-              className="toolbar-btn secondary"
-              onClick={() => {
-                setVocabulary([])
-                setCurrentWord(null)
-              }}
-              title="Quay lại chọn bộ từ"
-            >
-              Đổi bộ từ
-            </button>
-            <div className="options-count-selector">
-              <span className="options-count-label">Số đáp án:</span>
-              {OPTIONS_COUNTS.map((n) => (
-                <button
-                  key={n}
-                  className={`toolbar-btn ${optionsCount === n ? 'active' : 'secondary'}`}
-                  onClick={() => handleOptionsCountChange(n)}
-                  disabled={vocabulary.length < n}
-                  title={vocabulary.length < n ? `Cần ≥ ${n} từ` : `${n} đáp án`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <div className="auto-next-selector">
-              <span className="options-count-label">Tự next:</span>
-              <select
-                className="auto-next-select"
-                value={autoNextMs}
-                onChange={(e) => setAutoNextMs(Number(e.target.value))}
-              >
-                {AUTO_NEXT_VALUES.map((ms) => (
-                  <option key={ms} value={ms}>
-                    {(ms / 1000).toFixed(1)}s
-                  </option>
-                ))}
-              </select>
-            </div>
-            <label className="toolbar-btn secondary">
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileImport}
-                style={{ display: 'none' }}
-              />
-              Import JSON
-            </label>
-            <button className="toolbar-btn secondary" onClick={handleExport}>
-              Xuất tiến độ JSON
-            </button>
-            <button
-              className="toolbar-btn danger"
-              onClick={handleClearProgress}
-              title="Xóa lịch sử sai/ưu tiên, giữ nguyên từ vựng"
-            >
-              Xóa tiến độ
-            </button>
-          </div>
-        </div>
+        currentWord && (
+          <QuizView
+            currentWord={currentWord}
+            options={options}
+            showResult={showResult}
+            isCorrect={isCorrect}
+            autoNextMs={autoNextMs}
+            optionsCount={optionsCount}
+            vocabularyLength={vocabulary.length}
+            optionsCounts={OPTIONS_COUNTS}
+            onAnswerSelect={handleAnswerSelect}
+            onNext={handleNext}
+            onResetSet={() => {
+              setVocabulary([])
+              setCurrentWord(null)
+            }}
+            onOptionsCountChange={handleOptionsCountChange}
+            onAutoNextChange={setAutoNextMs}
+            onFileChange={handleFileImport}
+            onExport={handleExport}
+            onClearProgress={handleClearProgress}
+            speakWord={speakWord}
+            getWordProgress={getWordProgress}
+          />
+        )
       )}
     </div>
   )
