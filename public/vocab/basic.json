@@ -1,21 +1,6 @@
 {
-  "apple": "táo",
-  "banana": "chuối",
-  "cat": "mèo",
-  "dog": "chó",
   "elephant": "voi",
-  "flower": "hoa",
-  "house": "nhà",
-  "book": "sách",
-  "water": "nước",
-  "sun": "mặt trời",
-  "moon": "mặt trăng",
-  "computer": "máy tính",
-  "friend": "bạn bè",
   "happy": "vui vẻ",
-  "beautiful": "đẹp",
-  "sixth grade": "lớp sáu",
-  "second grade": "lớp hai",
   "workmates": "đồng nghiệp",
   "greatest": "tuyệt vời nhất",
   "fantastic": "tuyệt vời",
@@ -102,5 +87,4 @@
   "thing": "điều, thứ",
   "avoid": "tránh",
   "mistakes": "lỗi, sai lầm"
-
 }
