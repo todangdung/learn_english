@@ -23,6 +23,24 @@
       "name": "Từ vựng thời tiết",
       "description": "Từ liên quan đến thời tiết",
       "file": "weather.json"
+    },
+    {
+      "id": "12 tháng",
+      "name": "Từ vựng 12 tháng",
+      "description": "Từ liên quan đến 12 tháng trong năm",
+      "file": "month.json"
+    },
+    {
+      "id": "7 ngày trong tuần",
+      "name": "Từ vựng 7 ngày trong tuần",
+      "description": "Từ liên quan đến 7 ngày trong tuần",
+      "file": "week.json"
+    },
+    {
+      "id": "1-100 số đếm",
+      "name": "Từ vựng 1-100 số đếm",
+      "description": "Từ liên quan đến 1-100 số đếm",
+      "file": "counting.json"
     }
   ]
 }
